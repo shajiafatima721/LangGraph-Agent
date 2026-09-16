@@ -52,7 +52,7 @@ class AgentState(TypedDict):
 @st.cache_resource
 def get_graph():
     from langchain_groq import ChatGroq
-    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
+    llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0)
     llm_with_tools = llm.bind_tools(tools)
     
     SYSTEM_PROMPT = "You are a helpful assistant. Use tools when needed."
