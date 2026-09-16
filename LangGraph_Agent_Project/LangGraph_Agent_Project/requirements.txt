@@ -4,5 +4,6 @@ langchain
 langchain-core
 langchain-anthropic
 langchain-openai
+langchain-groq
 duckduckgo-search
 python-dotenv
