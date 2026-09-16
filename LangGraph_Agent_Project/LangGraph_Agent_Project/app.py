@@ -14,9 +14,15 @@ st.title("🤖 LangGraph ReAct Agent UI")
 
 # Sidebar for API Key Setup
 st.sidebar.header("Configuration")
-api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
-if api_key:
-    os.environ["GROQ_API_KEY"] = api_key
+
+# Try to load the key automatically from Streamlit Secrets first
+if "GROQ_API_KEY" in st.secrets:
+    os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
+    st.sidebar.success("API key loaded automatically ✅")
+else:
+    api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
+    if api_key:
+        os.environ["GROQ_API_KEY"] = api_key
 
 # Define Tools
 @tool
