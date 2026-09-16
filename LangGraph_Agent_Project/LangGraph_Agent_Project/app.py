@@ -10,7 +10,7 @@ from duckduckgo_search import DDGS
 
 # Page Config
 st.set_page_config(page_title="LangGraph ReAct Agent", page_icon="🤖")
-st.title("🤖 LangGraph ReAct Agent UI (Groq - free)")
+st.title("🤖 LangGraph ReAct Agent UI")
 
 # Sidebar for API Key Setup
 st.sidebar.header("Configuration")
