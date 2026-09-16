@@ -10,13 +10,13 @@ from duckduckgo_search import DDGS
 
 # Page Config
 st.set_page_config(page_title="LangGraph ReAct Agent", page_icon="🤖")
-st.title("🤖 LangGraph ReAct Agent UI")
+st.title("🤖 LangGraph ReAct Agent UI (Groq - free)")
 
 # Sidebar for API Key Setup
 st.sidebar.header("Configuration")
-api_key = st.sidebar.text_input("Enter Anthropic API Key", type="password")
+api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
 if api_key:
-    os.environ["ANTHROPIC_API_KEY"] = api_key
+    os.environ["GROQ_API_KEY"] = api_key
 
 # Define Tools
 @tool
@@ -51,8 +51,8 @@ class AgentState(TypedDict):
 # Graph Compilation Helper
 @st.cache_resource
 def get_graph():
-    from langchain_anthropic import ChatAnthropic
-    llm = ChatAnthropic(model="claude-sonnet-4-6", temperature=0)
+    from langchain_groq import ChatGroq
+    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
     llm_with_tools = llm.bind_tools(tools)
     
     SYSTEM_PROMPT = "You are a helpful assistant. Use tools when needed."
@@ -90,7 +90,7 @@ for msg in st.session_state.messages:
 
 # User Input Box
 if user_query := st.chat_input("Ask something..."):
-    if not os.environ.get("ANTHROPIC_API_KEY"):
+    if not os.environ.get("GROQ_API_KEY"):
         st.error("Please enter your API Key in the sidebar!")
     else:
         st.session_state.messages.append(HumanMessage(content=user_query))
@@ -98,10 +98,13 @@ if user_query := st.chat_input("Ask something..."):
             st.write(user_query)
 
         app = get_graph()
-        with st.spinner("Thinking & Executing Tools..."):
-            result = app.invoke({"messages": st.session_state.messages})
-            st.session_state.messages = result["messages"]
-            final_answer = st.session_state.messages[-1].content
+        try:
+            with st.spinner("Thinking & Executing Tools..."):
+                result = app.invoke({"messages": st.session_state.messages})
+                st.session_state.messages = result["messages"]
+                final_answer = st.session_state.messages[-1].content
 
-        with st.chat_message("assistant"):
-            st.write(final_answer)
+            with st.chat_message("assistant"):
+                st.write(final_answer)
+        except Exception as e:
+            st.error(f"Something went wrong while calling the model:\n\n{e}")
